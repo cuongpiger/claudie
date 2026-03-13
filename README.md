@@ -2,6 +2,18 @@
 
 A personal collection of Claude Code skills for software engineering workflows. Each skill is a reusable reference guide that helps Claude apply proven techniques consistently across projects.
 
+## Installation
+```bash
+claude
+
+/plugin marketplace add cuongpiger/claudie
+/plugin install claudie@software-engineer
+/reload-plugins
+/exit
+
+claude # Now you can use the skills in this collection!
+```
+
 ## Skills
 
 Skills live in the `skills/` directory. Each skill has a `SKILL.md` with frontmatter, overview, usage guidance, and examples.
