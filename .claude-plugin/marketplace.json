@@ -1,0 +1,22 @@
+{
+  "name": "claudie",
+  "owner": {
+    "name": "Cuong. Duong Manh"
+  },
+  "metadata": {
+    "description": "",
+    "version": "1.0.0",
+    "repository": "https://github.com/cuongpiger/claudie"
+  },
+  "plugins": [
+    {
+      "name": "software-engineer",
+      "description": "",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/claudie-commit"
+      ]
+    }
+  ]
+}
