@@ -7,9 +7,6 @@ A personal collection of Claude Code skills for software engineering workflows. 
 claude
 
 /plugin marketplace add cuongpiger/claudie
-/plugin install claudie@software-engineer
-/reload-plugins
-/exit
 
 claude # Now you can use the skills in this collection!
 ```
