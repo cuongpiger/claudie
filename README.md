@@ -4,6 +4,23 @@ A personal collection of Claude Code skills for software engineering workflows. 
 
 ## Installation
 
+## Codex
+To install the Codex version of these skills, follow these steps:
+```bash
+# Clone the repo
+git clone https://github.com/cuongpiger/claudie.git ~/.codex/claudie --depth 1
+
+# Create skills directory if it doesn't exist and create symlink to agents
+mkdir -p ~/.codex/skills
+ln -s ~/.codex/claudie/skills ~/.agents/skills/claudie
+```
+
+To upgrade to the latest version, simply pull the latest changes in the repo:
+```bash
+cd ~/.codex/claudie && git pull origin main
+```
+
+## Claude Code
 ```bash
 claude
 
