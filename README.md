@@ -11,7 +11,7 @@ To install the Codex version of these skills, follow these steps:
 git clone https://github.com/cuongpiger/claudie.git ~/.codex/claudie --depth 1
 
 # Create skills directory if it doesn't exist and create symlink to agents
-mkdir -p ~/.codex/skills
+mkdir -p ~/.agents/skills
 ln -s ~/.codex/claudie/skills ~/.agents/skills/claudie
 ```
 
