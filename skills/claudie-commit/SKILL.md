@@ -1,6 +1,7 @@
 ---
 name: claudie-commit
 description: Use when committing code, before staging changes — ensures messages are searchable, revertible, and provide clear history for debugging and blame
+model: 9haiku
 ---
 
 # Conventional Commits
