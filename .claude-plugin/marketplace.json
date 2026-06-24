@@ -16,7 +16,9 @@
       "strict": false,
       "skills": [
         "./skills/claudie-commit",
-        "./skills/claudie-analyze-project"
+        "./skills/claudie-analyze-project",
+        "./skills/claudie-writer",
+        "./skills/claudie-pr-creator"
       ]
     }
   ]
