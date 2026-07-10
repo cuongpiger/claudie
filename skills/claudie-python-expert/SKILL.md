@@ -1,7 +1,6 @@
-# Python Expert Skill
-
-Expert-level Python backend patterns for Django, FastAPI, Flask, and async programming.
-
+---
+name: claudie-python-expert
+description: Expert-level Python backend patterns for Django, FastAPI, Flask, and async programming.
 ---
 
 ## Auto-Detection
