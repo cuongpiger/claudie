@@ -18,7 +18,10 @@
         "./skills/claudie-commit",
         "./skills/claudie-analyze-project",
         "./skills/claudie-writer",
-        "./skills/claudie-pr-creator"
+        "./skills/claudie-pr-creator",
+        "./skills/claudie-ca",
+        "./skills/claudie-ddd",
+        "./skills/claudie-python-expert"
       ]
     }
   ]
