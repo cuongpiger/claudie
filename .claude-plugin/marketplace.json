@@ -21,7 +21,9 @@
         "./skills/claudie-pr-creator",
         "./skills/claudie-ca",
         "./skills/claudie-ddd",
-        "./skills/claudie-python-expert"
+        "./skills/claudie-python-expert",
+        "./skills/claudie-typescript-expert",
+        "./skills/claudie-turborepo"
       ]
     }
   ]

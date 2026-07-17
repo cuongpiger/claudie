@@ -151,3 +151,29 @@ Key principles:
 - If a section does not apply, write "N/A" with a one-line explanation
 
 See [skills/claudie-writer/SKILL.md](skills/claudie-writer/SKILL.md) for the full template and rules.
+
+---
+
+### claudie-turborepo
+
+**Trigger:** Use when working in a JavaScript/TypeScript monorepo that uses Turborepo — editing `turbo.json`, debugging cache misses/poisoning, configuring task graphs, filtering runs, or structuring workspaces.
+
+Acts as a Turborepo expert for developing, reviewing, and debugging monorepo build pipelines. Centered on the core insight that correct caching depends on completely declaring each task's inputs (files + env vars) and outputs.
+
+**Covers:**
+
+| Area | What it covers |
+|------|----------------|
+| turbo.json | `dependsOn` (`^`/`#`/`//` prefixes), `outputs`, `inputs`, `env`, `passThroughEnv`, `cache`, `persistent` |
+| Running & filtering | `turbo run`, `--filter` matrix (`pkg...`, `...pkg`, `{dir}`, `[git-range]`), `--affected` |
+| Cache debugging | Stale hits, cache poisoning, `--dry=json` / `--summarize` hash diffing |
+| Env vars | Strict vs Loose Mode, `.env` handling, avoiding cache poisoning |
+| Structure | `apps/` vs `packages/`, workspace config, internal package strategies |
+| Reviewing | Checklist for turbo.json PRs |
+
+Key principles:
+- Undeclared `outputs` → cache restores nothing; undeclared inputs/env → stale or poisoned cache
+- `^build` = build dependencies first; `build` = same-package order
+- Keep Strict Mode; `cache: false` is for dev/watch tasks, not to hide input bugs
+
+See [skills/claudie-turborepo/SKILL.md](skills/claudie-turborepo/SKILL.md) for the full reference, plus `references/` files for turbo.json fields, filtering syntax, troubleshooting, and internal packages.
