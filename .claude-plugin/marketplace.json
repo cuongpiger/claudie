@@ -23,7 +23,8 @@
         "./skills/claudie-ddd",
         "./skills/claudie-python-expert",
         "./skills/claudie-typescript-expert",
-        "./skills/claudie-turborepo"
+        "./skills/claudie-turborepo",
+        "./skills/claudie-fintech-fe"
       ]
     }
   ]
