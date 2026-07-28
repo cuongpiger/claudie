@@ -1,31 +1,40 @@
 {
-  "name": "claudie",
-  "owner": {
-    "name": "Cuong. Duong Manh"
-  },
-  "metadata": {
-    "description": "A personal collection of Claude Code skills for software engineering workflows, covering commit conventions, code analysis, and development best practices.",
-    "version": "1.0.0",
-    "repository": "https://github.com/cuongpiger/claudie"
-  },
-  "plugins": [
-    {
-      "name": "software-engineer",
-      "description": "Skills for software engineering best practices including conventional commits and project analysis.",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/claudie-commit",
-        "./skills/claudie-analyze-project",
-        "./skills/claudie-writer",
-        "./skills/claudie-pr-creator",
-        "./skills/claudie-ca",
-        "./skills/claudie-ddd",
-        "./skills/claudie-python-expert",
-        "./skills/claudie-typescript-expert",
-        "./skills/claudie-turborepo",
-        "./skills/claudie-fintech-fe"
-      ]
-    }
-  ]
+    "name": "claudie",
+    "owner": {
+        "name": "Cuong. Duong Manh"
+    },
+    "metadata": {
+        "description": "A set of skills for software engineering and investment advisory, including conventional commits, project analysis, and portfolio management.",
+        "version": "2.0.0",
+        "repository": "https://github.com/cuongpiger/claudie"
+    },
+    "plugins": [
+        {
+            "name": "software-engineer",
+            "description": "Skills for software engineering best practices including conventional commits and project analysis.",
+            "source": "./",
+            "strict": false,
+            "skills": [
+                "./skills/claudie-commit",
+                "./skills/claudie-analyze-project",
+                "./skills/claudie-writer",
+                "./skills/claudie-pr-creator",
+                "./skills/claudie-ca",
+                "./skills/claudie-ddd",
+                "./skills/claudie-python-expert",
+                "./skills/claudie-typescript-expert",
+                "./skills/claudie-turborepo",
+                "./skills/claudie-fintech-fe"
+            ]
+        },
+        {
+            "name": "investment-advisor",
+            "description": "Skills for investment advisory, including market analysis and portfolio management.",
+            "source": "./",
+            "strict": false,
+            "skills": [
+                "./skills/claudie-mutual-fund-advisor"
+            ]
+        }
+    ]
 }

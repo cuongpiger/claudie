@@ -1,0 +1,52 @@
+{
+  "skill_name": "claudie-mutual-fund-advisor",
+  "evals": [
+    {
+      "id": 0,
+      "name": "portfolio-allocation-ira-rollover",
+      "prompt": "I'm 42, married, and just rolled over an old 401(k) into an IRA with about $85k in it. I won't touch it until retirement (~25 years). I'd call myself middle-of-the-road on risk. How should I split this across funds?",
+      "expected_output": "Applies the age/risk allocation formulas: middle-of-the-road at 42 -> bonds = 42-10 = 32%, stocks = 110-42 = 68%; ~1/3 of stocks overseas (~23% intl, ~45% US). Shows the arithmetic, recommends low-cost index funds, notes it's a retirement account (so tax placement is moot / chase yield), keeps fund count small. Educational-not-licensed caveat.",
+      "files": [],
+      "assertions": [
+        "Computes the bond allocation as ~32% using age-10 (42-10)",
+        "Computes the stock allocation as ~68% using 110-age (110-42)",
+        "Recommends putting roughly one-third of the stock sleeve in international funds",
+        "Recommends low-cost index funds",
+        "Notes that inside an IRA taxes are sheltered, so tax-placement/tax-free-fund concerns don't apply",
+        "Shows the allocation arithmetic explicitly rather than just stating percentages",
+        "Includes an educational / not-a-licensed-advisor style caveat"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "screen-load-fund",
+      "prompt": "My broker is recommending the American Funds Growth Fund of America Class A shares — 5.75% up front, 0.64% expense ratio. Is this a good deal or should I look elsewhere?",
+      "expected_output": "Flags the 5.75% front-end load as the dominant problem (a commission paid out of invested money that buys nothing), recommends no-load alternatives, notes Class A = front-end load share class, applies cost-first screening. May note the 0.64% expense ratio isn't terrible but the load is disqualifying. Debunks broker myths. Educational caveat.",
+      "files": [],
+      "assertions": [
+        "Identifies the 5.75% up-front charge as a front-end load / sales commission",
+        "Recommends avoiding the load and considering no-load alternatives",
+        "Explains that a load buys nothing in fund quality (goes to the broker, not management)",
+        "Treats the 0.64% expense ratio as secondary to the load (not itself disqualifying)",
+        "Correctly labels Class A shares as the front-end-load share class",
+        "Includes an educational / not-a-licensed-advisor style caveat"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "beginner-debt-first-foundation",
+      "prompt": "I'm 28, have about $6k in credit card debt at 19% APR, no emergency fund, but I really want to start investing in index funds. Where do I begin, and how do I keep taxes low?",
+      "expected_output": "Enforces foundation-first: pay off the 19% credit card debt before investing (can't out-earn 19% with ~8-9% returns), build a 3-6 month emergency reserve in a money market fund, capture any employer 401(k) match, THEN invest in low-cost index funds. Addresses tax question (tax-advantaged accounts first; index funds are tax-efficient). Does not just hand over a fund allocation. Educational caveat.",
+      "files": [],
+      "assertions": [
+        "Advises paying off the 19% credit card debt before investing in funds",
+        "Explains you can't reliably out-earn 19% interest with ~8-9% investment returns",
+        "Recommends building a 3-6 month emergency reserve, ideally in a money market fund",
+        "Mentions capturing an employer 401(k) match / using tax-advantaged accounts first",
+        "Does NOT lead with a stock/bond fund allocation as the primary answer (foundation first)",
+        "Recommends low-cost index funds once the foundation is in place",
+        "Includes an educational / not-a-licensed-advisor style caveat"
+      ]
+    }
+  ]
+}

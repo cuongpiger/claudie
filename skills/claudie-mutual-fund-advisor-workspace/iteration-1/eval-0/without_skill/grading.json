@@ -1,0 +1,43 @@
+{
+  "eval_id": 0,
+  "config": "without_skill",
+  "num_passed": 5,
+  "num_total": 7,
+  "expectations": [
+    {
+      "text": "Computes the bond allocation as ~32% using age-10 (42-10)",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "text": "Computes the stock allocation as ~68% using 110-age (110-42)",
+      "passed": true,
+      "evidence": "stock percentage \u2192 110 \u2212 42 = **68%"
+    },
+    {
+      "text": "Recommends ~one-third of the stock sleeve international",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends low-cost index funds",
+      "passed": true,
+      "evidence": "index fund"
+    },
+    {
+      "text": "Notes IRA is tax-sheltered so tax placement doesn't apply",
+      "passed": true,
+      "evidence": "ira this is tax-free, so it's painless"
+    },
+    {
+      "text": "Shows the allocation arithmetic explicitly",
+      "passed": true,
+      "evidence": "110 \u2212"
+    },
+    {
+      "text": "Includes an educational / not-a-licensed-advisor caveat",
+      "passed": true,
+      "evidence": "not a licensed"
+    }
+  ]
+}

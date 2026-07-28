@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "screen-load-fund",
+  "prompt": "My broker is recommending the American Funds Growth Fund of America Class A shares — 5.75% up front, 0.64% expense ratio. Is this a good deal or should I look elsewhere?",
+  "assertions": [
+    {"text": "Identifies the 5.75% up-front charge as a front-end load / sales commission", "type": "content"},
+    {"text": "Recommends avoiding the load and considering no-load alternatives", "type": "content"},
+    {"text": "Explains that a load buys nothing in fund quality (goes to the broker, not management)", "type": "content"},
+    {"text": "Treats the 0.64% expense ratio as secondary to the load (not itself disqualifying)", "type": "content"},
+    {"text": "Correctly labels Class A shares as the front-end-load share class", "type": "content"},
+    {"text": "Includes an educational / not-a-licensed-advisor style caveat", "type": "content"}
+  ]
+}

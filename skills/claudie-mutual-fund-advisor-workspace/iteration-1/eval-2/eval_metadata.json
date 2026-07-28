@@ -1,0 +1,14 @@
+{
+  "eval_id": 2,
+  "eval_name": "beginner-debt-first-foundation",
+  "prompt": "I'm 28, have about $6k in credit card debt at 19% APR, no emergency fund, but I really want to start investing in index funds. Where do I begin, and how do I keep taxes low?",
+  "assertions": [
+    {"text": "Advises paying off the 19% credit card debt before investing in funds", "type": "content"},
+    {"text": "Explains you can't reliably out-earn 19% interest with ~8-9% investment returns", "type": "content"},
+    {"text": "Recommends building a 3-6 month emergency reserve, ideally in a money market fund", "type": "content"},
+    {"text": "Mentions capturing an employer 401(k) match / using tax-advantaged accounts first", "type": "content"},
+    {"text": "Does NOT lead with a stock/bond fund allocation as the primary answer (foundation first)", "type": "content"},
+    {"text": "Recommends low-cost index funds once the foundation is in place", "type": "content"},
+    {"text": "Includes an educational / not-a-licensed-advisor style caveat", "type": "content"}
+  ]
+}

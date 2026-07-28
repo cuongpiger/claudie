@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "claudie-mutual-fund-advisor", "runs": [{"id": "eval-0-with_skill", "prompt": "I'm 42, married, and just rolled over an old 401(k) into an IRA with about $85k in it. I won't touch it until retirement (~25 years). I'd call myself middle-of-the-road on risk. How should I split this across funds?", "eval_id": 0, "outputs": [{"name": "answer.md", "type": "text", "content": "# Splitting your $85k rollover IRA\n\nNice move getting that old 401(k) into an IRA \u2014 you keep the tax shelter and usually get far more (and cheaper) fund choices. Here's how I'd think about the split, using the framework from Eric Tyson's *Mutual Funds For Dummies*.\n\n## The inputs that drive the answer\n\n- **Age:** 42\n- **Time horizon:** ~25 years (you won't touch it until retirement) \u2014 this is squarely long-term money\n- **Risk personality:** middle-of-the-road (your words)\n- **Account type:** IRA (tax-sheltered), so tax placement doesn't complicate anything here \u2014 all interest, dividends, and gains grow tax-deferred, which actually makes bonds and rebalancing painless inside this account\n\nBecause the horizon is 25 years, you're firmly in \"stocks + longer-term bonds\" territory. Long-term money can ride out stock volatility because it has decades to recover \u2014 historically stocks have averaged roughly **9%/yr over the very long run** (with plenty of \u221220% years mixed in), and that average only accrues to people who stay invested through the rough patches.\n\n## The allocation math (so you can redo it yourself)\n\nFor a long-term goal, the book starts from your age and adjusts by risk personality. For **middle-of-the-road**:\n\n- **Bonds = age \u2212 10 = 42 \u2212 10 = 32%**\n- **Stocks = 110 \u2212 age = 110 \u2212 42 = 68%**\n\n(Those two must sum to 100 \u2014 32 + 68 = 100. \u2713)\n\nNext, split the stock sleeve between home and abroad. Concentrating all your stock money in one country \u2014 even the US \u2014 is riskier than spreading it globally. For middle-of-the-road, the guideline is **one-third of stocks overseas**:\n\n- **International = 33% \u00d7 68% \u2248 22%** of the whole portfolio\n- **US stocks = 68% \u2212 22% \u2248 46%**\n\n### Your target mix\n\n| Sleeve | % of portfolio | Dollars (of $85k) |\n|---|---|---|\n| US stocks | ~46% | ~$39,000 |\n| International stocks | ~22% | ~$19,000 |\n| Bonds | ~32% | ~$27,000 |\n| **Total** | **100%** | **$85,000** |\n\nRound these however you like \u2014 being off by a percent or two changes nothing.\n\n## Which funds to actually buy\n\n**Lean on low-cost index funds, especially for the bond and large US stock sleeves.** Index funds beat roughly **75% of comparable active funds over 10+ years**, and the reason is almost entirely cost. Costs are the one lever you fully control \u2014 they're subtracted from your return whether the fund does well or badly. A typical active US stock fund runs ~1.25%/yr in expenses; a broad US stock index fund runs closer to ~0.15%. That ~1.1%/yr head start, against ~9% expected returns, is like throwing away over 10% of your return every year \u2014 and it compounds brutally over 25 years. An index fund also can't underperform its own index the way an active manager can with bad bets.\n\nA clean, \"purebred\" three-fund lineup (each ~100% one asset type, so the math stays a simple multiply) covers you completely:\n\n1. **Total US stock market index fund** \u2014 ~$39,000\n2. **Total international stock index fund** \u2014 ~$19,000\n3. **Total (intermediate-term) bond index fund** \u2014 ~$27,000\n\nYou do **not** need more funds than that \u2014 mutual funds are already diversified internally, and at $85k three funds is plenty to monitor. Each sleeve is comfortably above the ~$3,000\u2013$5,000-per-fund minimum the book suggests, so you won't get nibbled by small-balance maintenance fees. As the balance grows well into six figures down the road, you *could* split a sleeve across 2\u20133 funds so one bad pick can't sink it \u2014 but that's a later refinement, not something to worry about now.\n\n**One-fund shortcut:** if you'd rather not manage three pieces, a single **target-date retirement fund** (aimed at roughly the year you turn ~65) or a balanced \"fund of funds\" does the allocation *and* the automatic de-risking for you in one holding. The trade-offs: check its expense ratio (some are cheap index-based, some aren't), and its glide path may be more conservative than 68% stocks today. But for a hands-off investor it's a perfectly legitimate whole-portfolio in one ticker.\n\n## How to deploy the money\n\nSince this is a **rollover of money already invested**, you generally don't need to agonize over lump-sum vs. dollar-cost-averaging \u2014 it was already in the market, and stepping out to \"wait for a better time\" is just market timing in disguise. **Buy-and-hold beats market timing**, which only ever looks easy in hindsight. I'd put it to work in your target mix now (or over a few weeks if a big single-day move makes you uneasy) and then leave it alone.\n\n## Ongoing\n\n- **Rebalance about once a year** back to your targets. Inside an IRA this is free and has no tax consequences, which is a real advantage \u2014 you can trim what's run up and top up what's lagged without a tax bill.\n- **Drift your stock share down slowly as you age.** The same formula naturally does this: at 50 it'd be ~40% bonds / 60% stocks, at 55 ~45%/55%, and so on. No need to touch it more than yearly.\n- **Don't forget to keep contributing** if you're eligible \u2014 a rollover doesn't use up your annual IRA contribution room, and 25 more years of contributions matters as much as the allocation.\n\n## A couple of caveats\n\n- I'm giving educational guidance grounded in the book's framework, **not licensed financial advice.** I've assumed this $85k is genuinely long-term money you won't need before retirement, that your emergency reserve and any high-interest debt are already handled (get the financial foundation right *before* investing is rule #1), and that you and your spouse are comfortable with a stock-heavy mix that can drop 20%+ in a bad year without you bailing out. If a \u221220% year would make you sell, dial the stock share down a notch toward \"play it safe\" \u2014 the best allocation is the one you'll actually stick with.\n- Contribution limits, tax rules, and specific fund expense ratios change over time \u2014 verify current figures before acting.\n- For a $85k rollover plus long-term planning, a one-time check-in with a **fee-only (fiduciary) advisor** can be worth it, though the plan above is deliberately simple enough to run yourself.\n\n## Want to go deeper\n\nSince you have the knowledge base handy:\n- Portfolio design and the allocation logic \u2192 [[Ch10 - Perfecting a Fund Portfolio]]\n- Why goals and time horizon come first \u2192 [[Ch03 - Funding Your Financial Plans]]\n- Picking the actual funds (expense ratios, index vs. active) \u2192 [[Ch07 - Finding the Best Funds]]\n- The bond and stock sleeves specifically \u2192 [[Ch12 - Bond Funds \u2014 When Boring Is Best]], [[Ch13 - Stock Funds \u2014 Meeting Your Longer Term Needs]]\n- Rebalancing and ongoing maintenance \u2192 [[Ch17 - Evaluating Your Funds and Adjusting Your Portfolio]]\n\n**Bottom line:** ~46% US stocks / ~22% international stocks / ~32% bonds, built from three low-cost index funds (or one target-date fund), bought now and rebalanced yearly, with the stock share easing down as you approach retirement.\n"}], "grading": {"eval_id": 0, "config": "with_skill", "num_passed": 7, "num_total": 7, "expectations": [{"text": "Computes the bond allocation as ~32% using age-10 (42-10)", "passed": true, "evidence": "bonds = age \u2212 10 = 42 \u2212 10 = 32%"}, {"text": "Computes the stock allocation as ~68% using 110-age (110-42)", "passed": true, "evidence": "stocks = 110 \u2212 age = 110 \u2212 42 = 68%"}, {"text": "Recommends ~one-third of the stock sleeve international", "passed": true, "evidence": "one-third of stocks overseas"}, {"text": "Recommends low-cost index funds", "passed": true, "evidence": "low-cost index"}, {"text": "Notes IRA is tax-sheltered so tax placement doesn't apply", "passed": true, "evidence": "ira \u2014 you keep the tax shelter"}, {"text": "Shows the allocation arithmetic explicitly", "passed": true, "evidence": "age \u2212 10"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "educational guidance"}]}}, {"id": "eval-0-without_skill", "prompt": "I'm 42, married, and just rolled over an old 401(k) into an IRA with about $85k in it. I won't touch it until retirement (~25 years). I'd call myself middle-of-the-road on risk. How should I split this across funds?", "eval_id": 0, "outputs": [{"name": "answer.md", "type": "text", "content": "# How to Split Your $85k IRA\n\nFirst, congratulations on the rollover \u2014 consolidating an old 401(k) into an IRA is a smart move that usually gives you lower fees and far more fund choices.\n\nA quick disclaimer: I'm not a licensed financial advisor, and this isn't personalized investment advice. What follows is a widely used framework for someone in your situation. Consider running it past a fee-only (fiduciary) advisor before acting.\n\n## Your profile in a nutshell\n\n- **Age 42, ~25-year horizon.** That's a long runway. Time is your biggest asset \u2014 it lets you ride out market downturns and lets compounding do the heavy lifting.\n- **\"Middle-of-the-road\" risk.** For a moderate investor with 25 years to go, a common starting point is roughly **75\u201380% stocks / 20\u201325% bonds**. You're still young enough to lean growth-heavy, but the bond slice keeps volatility from feeling stomach-churning.\n\nA rough rule of thumb some people use is \"110 minus your age\" for the stock percentage \u2192 110 \u2212 42 = **68% stocks**. A more growth-oriented \"120 minus age\" gives **78%**. Given your long horizon and the fact that you won't touch this money for decades, landing somewhere in the **75/25** range is reasonable for a moderate risk tolerance.\n\n## A simple, low-cost model portfolio (~75/25)\n\nThe single most important thing you can control is **cost**. Favor low-expense-ratio index funds (look for expense ratios under ~0.10%). Here's a classic \"three-to-four fund\" split:\n\n| Allocation | Fund type | What it covers |\n|-----------:|-----------|----------------|\n| **45%** | Total U.S. Stock Market index | Broad exposure to the entire U.S. market (large, mid, small cap) |\n| **25%** | Total International Stock index | Developed + emerging markets outside the U.S. |\n| **5%**  | (Optional) U.S. Small-Cap or REIT index | A modest tilt for extra diversification/growth |\n| **25%** | Total Bond Market index | Stability and ballast |\n\nRounded, that's **~75% stocks / 25% bonds**, globally diversified.\n\n### If you want maximum simplicity\n\nYou could put the entire $85k into a **single Target-Date Retirement fund** \u2014 for you, that'd be a **Target 2050** fund (you're ~65 around 2049\u20132050). It automatically holds a diversified stock/bond mix and gradually gets more conservative as you approach retirement. One fund, one decision, professionally rebalanced. Just check that the version you pick is a low-cost index-based one, since target-date funds vary a lot in fees.\n\n### If you want to build it yourself\n\nAny of the big low-cost providers (Vanguard, Fidelity, Schwab) offer near-identical total-market index funds. Example building blocks (not endorsements \u2014 just illustrative of the categories):\n\n- Total U.S. stock: e.g. VTI / FSKAX / SWTSX\n- Total international: e.g. VXUS / FTIHX / SWISX\n- Total bond: e.g. BND / FXNAX / SWAGX\n\n## In dollar terms ($85,000 at 75/25)\n\n- U.S. stocks (45%): ~$38,250\n- International stocks (25%): ~$21,250\n- Small-cap/REIT tilt (5%, optional): ~$4,250\n- Bonds (25%): ~$21,250\n\n(If you skip the small-cap tilt, just fold that 5% into the U.S. stock fund \u2192 50% U.S. stocks.)\n\n## A few practical tips\n\n1. **Rebalance about once a year.** If stocks run up and your mix drifts to, say, 82/18, sell a bit and buy bonds to get back to target. Inside an IRA this is tax-free, so it's painless.\n2. **Automate contributions if you can.** You can generally add up to the annual IRA limit ($7,000 in 2025 if under 50; check the current year's cap). Dollar-cost averaging over time smooths out market timing risk.\n3. **Don't tinker during downturns.** Your 25-year horizon means you'll live through several bear markets. The investors who do best are usually the ones who leave it alone.\n4. **Reassess your bond percentage every 5\u201310 years.** As you get within ~10 years of retirement, gradually shift more toward bonds (a target-date fund does this for you automatically).\n5. **Mind the fees.** Over 25 years, the difference between a 0.05% and a 1.0% expense ratio can cost you tens of thousands of dollars. Cheap index funds win.\n\n## Bottom line\n\nFor a 42-year-old moderate investor with a 25-year horizon, a globally diversified **~75% stock / 25% bond** portfolio built from low-cost index funds is a sound, mainstream approach. If you'd rather not manage it, a single low-cost **Target-Date 2050** fund gets you essentially the same thing on autopilot.\n\nWhatever you choose, the winning behaviors are the same: keep costs low, stay diversified, rebalance occasionally, and don't panic-sell. Time in the market is on your side.\n"}], "grading": {"eval_id": 0, "config": "without_skill", "num_passed": 5, "num_total": 7, "expectations": [{"text": "Computes the bond allocation as ~32% using age-10 (42-10)", "passed": false, "evidence": ""}, {"text": "Computes the stock allocation as ~68% using 110-age (110-42)", "passed": true, "evidence": "stock percentage \u2192 110 \u2212 42 = **68%"}, {"text": "Recommends ~one-third of the stock sleeve international", "passed": false, "evidence": ""}, {"text": "Recommends low-cost index funds", "passed": true, "evidence": "index fund"}, {"text": "Notes IRA is tax-sheltered so tax placement doesn't apply", "passed": true, "evidence": "ira this is tax-free, so it's painless"}, {"text": "Shows the allocation arithmetic explicitly", "passed": true, "evidence": "110 \u2212"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "not a licensed"}]}}, {"id": "eval-1-with_skill", "prompt": "My broker is recommending the American Funds Growth Fund of America Class A shares \u2014 5.75% up front, 0.64% expense ratio. Is this a good deal or should I look elsewhere?", "eval_id": 1, "outputs": [{"name": "answer.md", "type": "text", "content": "# Is American Funds Growth Fund of America Class A a good deal?\n\nShort version: **Pass on the Class A shares as your broker pitched them.** The fund itself is a respectable, established stock fund from a reputable company \u2014 but the 5.75% front-end load is a dealbreaker, and you can get equivalent (or better) diversified stock exposure with no sales commission and a lower expense ratio. Here's the reasoning, run through the three screening filters I use for any specific fund, in order.\n\n## Filter 1 \u2014 Costs (the decisive, knowable factor)\n\nYou can never know a fund's future return, but you *can* know its costs with certainty, and costs come out of your return every year regardless of how the fund performs. So this is where the decision gets made.\n\n**The load: 5.75% up front \u2014 this is the problem.**\nA load is a sales commission that goes to the broker recommending it, out of *your* invested dollars. It buys you nothing in fund quality \u2014 no study shows load funds get better managers. Watch what it does to your money:\n\n- You hand over **$10,000**. The 5.75% load skims **$575** off the top. Only **$9,425** actually gets invested.\n- You are down 5.75% on day one and need the fund to gain about **6.1%** just to claw back to even (since you have to grow the smaller $9,425 base back up to $10,000).\n- That's a permanent, guaranteed drag before the market does anything.\n\nA common counter you may hear from the broker: *\"the fund company pays my commission, not you.\"* Not true \u2014 it comes straight out of the amount you invest. There is simply no reason to pay this when equivalent no-load funds exist.\n\n**The expense ratio: 0.64% per year \u2014 the less bad part.**\nFor an actively managed US stock fund this is actually below the old active-fund average (~1.25%), and American Funds is known for keeping expenses relatively moderate. So 0.64% on its own wouldn't be a red flag. But context matters: a plain broad-market US stock **index fund runs around ~0.03%\u20130.15%**. On a stock fund, an extra ~0.5%/yr of expense is roughly 5% of your expected annual return handed over every year, compounding for decades. Combined with the 5.75% load, the total cost gap versus a no-load index alternative is large.\n\n**Cost verdict: fails filter 1.** Not because 0.64% is outrageous, but because the 5.75% load is pure avoidable waste and there's no need to accept it.\n\n## Filter 2 \u2014 Performance vs. risk\n\nGrowth Fund of America is one of the largest, longest-running US growth funds, with a genuinely long track record \u2014 so unlike a hyped \"hot fund,\" it's not a one-year flash you should be suspicious of. That's a point in its favor.\n\nBut two cautions:\n- **Long-run, most active funds trail a comparable low-cost index** after costs, largely *because* of costs \u2014 and here you'd be starting each dollar 5.75% behind. The load makes it even harder for the fund to beat a cheap index net of what you paid.\n- Judge any return against the *right* benchmark (a broad US large-cap/growth index), not a flattering one. Even in years the fund looks good gross, the load and higher expense ratio eat the edge.\n\nSo the fund isn't reckless or gimmicky \u2014 the issue is that its cost structure makes market-beating net returns unlikely, not that it takes wild risk.\n\n## Filter 3 \u2014 Manager & company\n\nThis is where the fund scores well. American Funds (Capital Group) is an experienced, deep, reputable fund company with real category expertise and a team-based management approach, not a marketing-department gimmick. If the *only* question were \"is this a legitimate, well-run fund,\" the answer would be yes.\n\nThat's not enough to save it, though: the gap between a good manager and an average one is small (a couple percent a year at most), while the 5.75% load is a large, certain cost. Good management doesn't justify an unnecessary sales commission.\n\n## Verdict: Pass \u2014 and here's the single reason\n\n**The 5.75% front-end load is an avoidable cost that buys you nothing.** You lose $575 of every $10,000 before you're even invested, and you can get equivalent diversified US stock exposure with **no load** and a **much lower expense ratio**.\n\nWhat to look at instead:\n- A broad **no-load US stock index fund** (total-market or S&P 500) \u2014 expense ratios around 0.03%\u20130.15%, no commission. This is the low-cost core most long-term stock money should sit in.\n- If you specifically want *active* management from American Funds, know that the **same fund and manager** are often available without the Class A sales charge inside many **401(k)/employer plans** or through certain no-load/institutional share classes \u2014 so you may not need to pay the load even for this exact fund. Ask specifically about a no-load or load-waived share class.\n- Be skeptical of the Class **B and C** shares if the broker offers those as an \"alternative\" \u2014 they dodge the upfront load but pile on higher annual 12b-1 fees that usually cost you more over time.\n\nOne thing to confirm before you act: get the fund's **prospectus** and read the line \"Total Fund Operating Expenses\" and the sales-charge schedule yourself \u2014 marketing materials obscure true costs, and the prospectus is the only reliable source.\n\n---\n\n*General educational guidance based on the low-cost, evidence-based framework in Eric Tyson's* Mutual Funds For Dummies *\u2014 not personalized financial advice. Fund fees, share-class availability, and expense figures change, so verify current numbers in the prospectus. For a big decision, a fee-only (fiduciary) adviser \u2014 one who doesn't earn commissions on what they sell you \u2014 is worth considering.*\n"}], "grading": {"eval_id": 1, "config": "with_skill", "num_passed": 5, "num_total": 6, "expectations": [{"text": "Identifies the 5.75% as a front-end load / sales commission", "passed": true, "evidence": "5.75% front-end load"}, {"text": "Recommends avoiding the load / no-load alternatives", "passed": true, "evidence": "pass on"}, {"text": "Explains load buys nothing in fund quality", "passed": true, "evidence": "goes to the broker"}, {"text": "Treats 0.64% expense ratio as secondary to the load", "passed": true, "evidence": "0.64% per year \u2014 the less bad"}, {"text": "Correctly labels Class A as front-end-load share class", "passed": false, "evidence": ""}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "educational guidance"}]}}, {"id": "eval-1-without_skill", "prompt": "My broker is recommending the American Funds Growth Fund of America Class A shares \u2014 5.75% up front, 0.64% expense ratio. Is this a good deal or should I look elsewhere?", "eval_id": 1, "outputs": [{"name": "answer.md", "type": "text", "content": "# Is the American Funds Growth Fund of America Class A a Good Deal?\n\nShort answer: The fund itself is a perfectly respectable, long-running large-cap growth fund \u2014 but the **Class A share structure your broker is recommending is an expensive way to own it.** For most investors, you can get equivalent or better exposure at a fraction of the cost. Before you say yes, understand exactly what you'd be paying and why.\n\n---\n\n## What you're actually being quoted\n\n| Cost | What it is |\n|---|---|\n| **5.75% front-end load (sales charge)** | A one-time commission taken off the top the moment you invest. On a $10,000 investment, **$575 goes to the broker/fund company immediately** and only **$9,425 actually gets invested.** |\n| **0.64% expense ratio** | The annual fee the fund charges every year to run the fund, deducted from returns automatically. |\n\nThere may also be a small **12b-1 fee (~0.25%)** baked into that expense ratio, which is an ongoing marketing/distribution fee \u2014 part of which can act as a trailing commission to the broker.\n\n---\n\n## Why the 5.75% load is the real problem\n\nA sales load is a pure headwind. It is money that never gets a chance to compound for you.\n\n- Invest **$10,000**, and you start underwater at **$9,425**. You need a **~6.1% gain just to break even** on the sales charge.\n- Over a long horizon the *percentage* drag shrinks (because it's one-time), but the **dollars of lost compounding grow.** That $575, invested instead at ~7%/year for 30 years, would have grown to roughly **$4,400.**\n\nLoads are a relic of a commission-based sales model. In today's market, **there is no investment reason to pay a front-end load** \u2014 index funds and thousands of no-load funds deliver comparable or better results without it. A load does not buy you a better fund; it buys your broker a commission.\n\n---\n\n## The expense ratio: not terrible, but not cheap\n\nAt **0.64%**, GFOA is below the average for actively managed funds, but it's still **many times more expensive than a broad index fund:**\n\n| Option | Approx. expense ratio | Load |\n|---|---|---|\n| American Funds GFOA \u2014 Class A | 0.64% | 5.75% up front |\n| Typical S&P 500 index fund (e.g., VFIAX, FXAIX, SWPPX) | 0.015%\u20130.04% | None |\n| Total US market index (e.g., VTSAX, VTI) | ~0.03%\u20130.04% | None |\n\nOn $100,000, 0.64% is **$640/year** vs. roughly **$30\u2013$40/year** for an index fund. That gap compounds against you every single year you hold it, on top of the one-time load.\n\n---\n\n## Is Growth Fund of America itself any good?\n\nYes \u2014 it's a legitimate, well-known fund. It's one of the largest actively managed funds in the U.S., has a very long track record, uses a multi-manager approach, and has generally delivered solid long-term returns. The problem is not the fund's quality. The problem is:\n\n1. **You're paying a 5.75% toll to access it**, and\n2. **Actively managed large-cap growth funds, as a group, rarely beat low-cost index funds over the long run** after fees. The vast majority of active large-cap funds underperform the S&P 500 over 10\u201315 year periods (this is well documented in SPIVA/index-vs-active studies year after year).\n\nSo you'd be paying a premium price for a product that, statistically, is unlikely to outperform a near-free alternative.\n\n---\n\n## Important nuances (so you're not misled)\n\n**1. You may not actually pay the full 5.75%.** American Funds A-shares have **breakpoints** \u2014 the load drops as you invest more:\n\n| Amount invested | Approx. front-end load |\n|---|---|\n| < $25,000 | 5.75% |\n| $25,000\u2013$49,999 | 5.00% |\n| $50,000\u2013$99,999 | 4.50% |\n| $100,000\u2013$249,999 | 3.50% |\n| $250,000\u2013$499,999 | 2.50% |\n| $500,000\u2013$749,999 | 2.00% |\n| $750,000\u2013$999,999 | 1.50% |\n| $1,000,000+ | 0% |\n\nIf you're investing a large lump sum, the load shrinks. At **$1M+, A-shares actually become one of the *cheaper* ways to own American Funds** and can be reasonable. For a typical retail investment of a few thousand to low tens of thousands, though, you pay near the full 5.75%.\n\n**2. Don't get talked into Class C shares instead.** If your broker pivots to \"no-load\" C-shares, be careful: those typically carry a **~1% higher annual expense ratio** and a back-end charge if you sell early. Over a long hold, C-shares can cost *more* than A-shares. Neither is your best option for a long-term buy-and-hold.\n\n**3. American Funds can be owned load-waived.** The same funds are sometimes available with **no load inside certain 401(k) plans or fee-based advisory accounts.** If you own it through an employer plan, the load may not apply \u2014 check before assuming.\n\n---\n\n## What to consider instead\n\nFor most long-term investors, a cleaner, cheaper path to the same \"U.S. large-cap growth\" goal:\n\n- **A broad low-cost index fund or ETF** \u2014 S&P 500 (VOO/VFIAX/FXAIX) or total U.S. market (VTI/VTSAX). No load, ~0.03% expense ratio, diversified, tax-efficient.\n- **A no-load actively managed fund**, if you specifically want active management, with no sales charge and a competitive expense ratio.\n- If you want **advice**, consider a **fee-only fiduciary advisor** (flat fee or ~% of assets) rather than a commission-based broker. A fiduciary is legally required to act in your best interest; a commissioned broker generally is not held to that same standard for product sales.\n\n---\n\n## The key question to ask your broker\n\n> *\"How are you compensated on this recommendation, and can you show me a no-load or index alternative for comparison?\"*\n\nIf the answer is \"I earn a commission from the 5.75% load,\" that tells you a lot about **why** this particular product is being recommended. A recommendation isn't automatically bad because someone's paid on it \u2014 but you deserve to see the low-cost alternative side by side and decide with full information.\n\n---\n\n## Bottom line\n\n- **The fund is fine. The share class and the sales load are the issue.**\n- Paying **5.75% up front is almost never justified** when comparable exposure is available for free.\n- Unless you're (a) investing a very large sum that hits high breakpoints, or (b) getting genuine, ongoing fiduciary advice you value and understand you're paying for, **you can very likely do better elsewhere** with a low-cost index fund or a no-load fund.\n- **Look elsewhere first**, then decide \u2014 don't let the fact that the fund has a good name distract you from the toll you're being asked to pay to enter it.\n\n---\n\n*This is general educational information, not personalized financial advice. Your best choice depends on your specific situation \u2014 account type (taxable vs. IRA/401k), amount invested, time horizon, and whether you want ongoing advice. Consider consulting a fee-only fiduciary advisor for a recommendation tailored to you.*\n"}], "grading": {"eval_id": 1, "config": "without_skill", "num_passed": 6, "num_total": 6, "expectations": [{"text": "Identifies the 5.75% as a front-end load / sales commission", "passed": true, "evidence": "5.75% front-end load (sales"}, {"text": "Recommends avoiding the load / no-load alternatives", "passed": true, "evidence": "instead"}, {"text": "Explains load buys nothing in fund quality", "passed": true, "evidence": "goes to the broker"}, {"text": "Treats 0.64% expense ratio as secondary to the load", "passed": true, "evidence": "not terrible"}, {"text": "Correctly labels Class A as front-end-load share class", "passed": true, "evidence": "class and the sales load"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "fee-only"}]}}, {"id": "eval-2-with_skill", "prompt": "I'm 28, have about $6k in credit card debt at 19% APR, no emergency fund, but I really want to start investing in index funds. Where do I begin, and how do I keep taxes low?", "eval_id": 2, "outputs": [{"name": "answer.md", "type": "text", "content": "# Where to begin (and it's not index funds yet)\n\nFirst: love the instinct to invest at 28. Time is the single biggest advantage you have, and wanting to use it puts you ahead of most people. So I'm not going to talk you out of investing \u2014 I'm going to get you to the starting line in the right order, because the order is what makes the difference over a decade.\n\nHere's the honest framing from the *Mutual Funds For Dummies* pre-investing checklist: **the most common beginner mistake is buying funds before the financial foundation is ready.** There are three \"gates\" to clear before a dollar goes into an index fund, and you're sitting right on top of the two that matter most: high-interest debt and an emergency reserve.\n\nLet me walk your actual numbers.\n\n---\n\n## Step 1 \u2014 Kill the credit card debt first (this IS your best investment)\n\nYou have **$6,000 at 19% APR**. Paying that off isn't a detour away from investing \u2014 it's the highest-return, lowest-risk investment available to you right now. Here's the math that makes it non-negotiable:\n\n- Stocks have returned roughly **~9%/year** on average over two centuries \u2014 and only to people who stay invested through the ugly years.\n- Your card charges **19%/year, guaranteed, with no volatility.**\n- Paying off the balance is a **guaranteed, tax-free 19% return.** No index fund can promise you that. You cannot reliably out-earn 19% interest with an ~9% expected return \u2014 you'd be borrowing at 19% to chase 9%, which is a guaranteed loss of ~10%/year on that money.\n\nSo every spare dollar goes at the card until it's gone. On $6,000 at 19%, if you can throw ~$500/month at it you're done in about 13\u201314 months; ~$650/month gets you there in about 10. Whatever the exact number, treat this as your \"investment plan\" for roughly the next year.\n\nOne nuance from the book: it's fine to keep a *small* cash cushion while you attack the debt (see Step 2) so a flat tire doesn't send you straight back to the card. But don't let a big pile of \"someday\" cash sit at 0\u20134% while 19% compounds against you.\n\n## Step 2 \u2014 Build a starter emergency reserve (in parallel / right after)\n\nYou said no emergency fund. That's the other gate. Without it, the next surprise \u2014 car repair, medical bill, gap between jobs \u2014 goes back onto the 19% card and undoes your progress.\n\n- **Target: 3\u20136 months of living expenses**, held in a **money market fund** (or equivalent high-yield savings) \u2014 something stable and liquid, *not* stocks. This is short-term money, so it stays safe by design; the whole point is that it's there and unmoved when you need it.\n- Because you're mid-payoff, a sensible sequence is: build a small **$1,000\u2013$1,500 starter cushion** first so you're not one emergency away from the card, then **blitz the $6k debt**, then **finish filling the reserve to a full 3\u20136 months** before you start investing.\n- If your income is erratic (freelance, commission, no family safety net), aim toward the **higher end \u2014 up to a full year**. If it's a steady salary, 3\u20134 months is reasonable.\n\n## Step 3 \u2014 Two quick foundation checks while you're at it\n\n- **Insurance:** one uninsured catastrophe can wipe out years of investing. Make sure you have health coverage, and \u2014 if anyone depends on your income \u2014 long-term **disability** insurance especially (it's the coverage people your age most often skip and most need).\n- **A 401(k) match, if your employer offers one:** this is the one exception to \"debt first.\" An employer match is an instant 50\u2013100% return \u2014 free money you shouldn't leave on the table. If you have a match, contribute *just enough to capture the full match* even while paying down the card, then send everything else at the debt. If there's no match, debt payoff wins outright.\n\n---\n\n## Then \u2014 and this is where the fun starts \u2014 the index-fund plan\n\nOnce the card is at $0 and your reserve is funded, you'll actually be in a *stronger* position to invest than most people who skip these steps, because your cash flow is now free and you won't panic-sell the first time the market drops. Here's the shape of it, so you know what you're working toward:\n\n**Use tax-advantaged accounts first \u2014 this is your #1 tax lever.** For long-term money like retirement, the biggest tax savings by far come from *where* you invest, not from clever fund picking:\n\n- **401(k)/403(b)** (especially with a match) and/or a **Roth IRA.** In these, growth compounds without you owing tax on dividends or gains along the way. A Roth in particular is a strong fit at 28 \u2014 you pay tax on the contribution now while your income/bracket is likely lower, and qualified withdrawals in retirement are tax-free.\n- Max out the tax-advantaged space you have access to *before* investing in a regular taxable brokerage account. This single habit does more for your after-tax returns than any fund-level tax trick.\n\n**Your allocation** (a starting point \u2014 retirement is a 7+ year, really 30+ year, horizon so it's stock-heavy). Using the book's age-based formula for a \"middle-of-the-road\" risk personality:\n\n- Bonds = age \u2212 10 = 28 \u2212 10 = **~18%**\n- Stocks = 110 \u2212 age = 110 \u2212 28 = **~82%**\n- Of the stock sleeve, put about a third overseas: 33% \u00d7 82% \u2248 **~27% international**, leaving **~55% US stocks**.\n- So a rough target: **~55% US stock index / ~27% international stock index / ~18% bond index.**\n\nIf a 20\u201330% drop in a given year would genuinely make you want to bail, start one notch more conservative (\"play it safe\": bonds = age = ~28%) and migrate toward more stocks as your comfort grows. Gradual beats abrupt. If you're comfortable with volatility and want maximum long-run growth, you can lean more aggressive. That dial is genuinely your call.\n\n**Why index funds are the right instinct:** low-cost index funds beat about **75% of comparable active funds over 10+ years**, mostly on cost. A typical active US stock fund runs ~1.25%/year in expenses; a broad US stock index fund runs closer to ~0.15%. That ~1.1%/year gap, against ~9% expected returns, is like throwing away ~12% of your return every year \u2014 and it compounds. Favor **no-load, low-expense-ratio index funds**, and **buy-and-hold** rather than trying to time the market.\n\n**Keeping taxes low, in order of impact:**\n1. **Tax-advantaged accounts first** (401(k), Roth IRA) \u2014 the big one, covered above.\n2. **In any taxable account, index funds/ETFs are naturally tax-efficient** \u2014 they trade little, so they throw off few taxable capital-gains distributions. This is a real edge over active funds beyond just fees.\n3. **Hold for the long term.** Gains on investments held **over a year** get preferential long-term capital-gains rates; under a year they're taxed as ordinary income. Buy-and-hold is tax-smart automatically.\n4. **Municipal (tax-free) bond funds** only make sense in a *taxable* account and only if you're in a high federal bracket (roughly **28%+**) \u2014 at 28 with modest income and no debt-free surplus yet, that's probably not you, so don't reach for them. And never hold muni/Treasury funds *inside* a retirement account \u2014 it wastes the shelter.\n5. Small timing point for later: **don't buy a fund right before its year-end distribution** (usually December) in a taxable account \u2014 you'd owe tax on a payout that just lowers the share price, gaining nothing.\n\n---\n\n## Your actual roadmap, in one glance\n\n1. **Now:** stash a small **$1,000\u2013$1,500** starter cushion in a money market / high-yield savings account. Capture any **employer 401(k) match**.\n2. **Next ~10\u201314 months:** throw every spare dollar at the **$6,000 / 19% card** until it's gone. This is your best \"investment\" this year.\n3. **After that:** finish building the **3\u20136 month emergency reserve** (up to a year if your income is lumpy). Confirm health + disability insurance.\n4. **Then:** open/fund a **Roth IRA and/or 401(k)**, and start buying **low-cost, no-load index funds** at roughly **55% US stock / 27% international / 18% bond**, buy-and-hold. Automate the contributions.\n\nYou're not behind by doing it in this order \u2014 you're doing it *right*. Clearing 19% debt and building a reserve first is exactly what lets you stay invested calmly through the market drops that shake everyone else out.\n\n---\n\n*A few caveats: I'm not a licensed financial advisor \u2014 this is educational guidance based on the framework in Eric Tyson's* Mutual Funds For Dummies. *Specific figures like tax brackets, IRA/401(k) contribution limits, and long-term capital-gains thresholds change over time, so verify the current numbers before acting. For a big or complex decision, a fee-only (fiduciary) advisor \u2014 one who sells advice, not products \u2014 is worth it.*\n\nFor deeper reading in your vault: [[Ch03 - Funding Your Financial Plans]] (the foundation checklist and goals), [[Ch21 - Ten Common Fund-Investing Mistakes and How to Avoid Them]] (why foundation-first matters), [[Ch10 - Perfecting a Fund Portfolio]] (building the allocation), and [[Ch18 - The Taxing Side of Mutual Funds]] (tax-efficient placement).\n"}], "grading": {"eval_id": 2, "config": "with_skill", "num_passed": 7, "num_total": 7, "expectations": [{"text": "Advises paying off 19% credit card debt before investing", "passed": true, "evidence": "kill the credit card debt"}, {"text": "Explains can't out-earn 19% with ~8-9% returns", "passed": true, "evidence": "19%/year, guaranteed"}, {"text": "Recommends 3-6 month emergency reserve in money market fund", "passed": true, "evidence": "3\u20136 months of living expenses**, held in a **money market"}, {"text": "Mentions employer 401(k) match / tax-advantaged first", "passed": true, "evidence": "401(k) match"}, {"text": "Does NOT lead with a fund allocation as primary answer", "passed": true, "evidence": "not index funds yet"}, {"text": "Recommends low-cost index funds once foundation set", "passed": true, "evidence": "index fund"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "not a licensed"}]}}, {"id": "eval-2-without_skill", "prompt": "I'm 28, have about $6k in credit card debt at 19% APR, no emergency fund, but I really want to start investing in index funds. Where do I begin, and how do I keep taxes low?", "eval_id": 2, "outputs": [{"name": "answer.md", "type": "text", "content": "# Getting Started: Debt, Safety Net, then Investing\n\nFirst, the good news: at 28 with the instinct to invest, you're thinking about the right things at the right time. Time is the single biggest advantage you have. But the order in which you do things matters a lot, and the math points to a clear sequence.\n\n*(This is educational information, not personalized financial or tax advice. Consider confirming specifics with a fee-only fiduciary advisor or a tax professional for your situation.)*\n\n---\n\n## The core tension: 19% debt vs. index fund returns\n\nYou want to invest, and that's a great instinct. But let's be honest about the numbers.\n\n- Your credit card charges **19% APR**. Paying it off is a **guaranteed, tax-free 19% return** on every dollar you throw at it.\n- A diversified stock index fund has historically returned roughly **7\u201310% per year on average** \u2014 but that's variable, not guaranteed, and can be negative for years at a time.\n\nNo index fund reliably beats a guaranteed 19%. So mathematically, **crushing the credit card debt is your highest-return \"investment\" right now.** It feels less exciting than buying an index fund, but it's the same thing as earning 19% risk-free.\n\nThe one nuance: don't go fully \"all-in on debt with $0 in the bank,\" because the reason people fall into credit card debt in the first place is having no cushion when life throws a surprise. So we build a small buffer alongside.\n\n---\n\n## A step-by-step order of operations\n\n### Step 1 \u2014 Build a starter emergency fund ($1,000\u2013$2,000)\nBefore aggressively attacking the debt, park a small cushion in a **high-yield savings account (HYSA)** \u2014 many currently pay in the ballpark of 4% APY. This keeps a flat tire or a dental bill from going right back onto the 19% card. Think of it as insurance for your debt payoff plan.\n\n### Step 2 \u2014 Capture any free 401(k) match (if you have one)\nIf your employer offers a 401(k) match (e.g., \"we match 100% of the first 4%\"), contribute **just enough to get the full match** \u2014 even while paying down debt. A 100% match is an instant 100% return, which beats even your 19% debt. If there's no match, skip this and go straight to Step 3.\n\n### Step 3 \u2014 Attack the $6k credit card debt aggressively\nThrow every spare dollar at the card. Two popular methods:\n- **Avalanche** (cheapest): pay minimums on everything, then dump extra on the highest-APR balance. Best if your $6k is spread across cards.\n- **Snowball** (most motivating): pay off the smallest balance first for a psychological win.\n\nSince it sounds like this is one main 19% balance, avalanche essentially means \"pay it off as fast as you can.\" Also consider a **0% APR balance-transfer card** if you qualify \u2014 it can pause the interest for 12\u201318 months (watch for the ~3\u20135% transfer fee) and let 100% of your payments hit principal.\n\nAt $6k and 19%, if you can put ~$500/month toward it, you'd be debt-free in roughly **13\u201314 months** and save a meaningful chunk of interest.\n\n### Step 4 \u2014 Build a full emergency fund (3\u20136 months of expenses)\nOnce the card is gone, redirect those payments into your HYSA until you have **3\u20136 months of essential expenses** saved. This is the foundation that lets you invest without being forced to sell in a downturn.\n\n### Step 5 \u2014 Now invest in index funds, tax-efficiently\nWith no high-interest debt and a real safety net, you can invest with confidence and a long time horizon.\n\n---\n\n## How to actually start investing in index funds\n\n**Use tax-advantaged accounts first \u2014 this is the biggest lever for keeping taxes low.**\n\n1. **Roth IRA** (2025 limit: $7,000/yr if under 50). You contribute after-tax dollars, and all growth and withdrawals in retirement are **completely tax-free**. Ideal for a 28-year-old whose income (and tax bracket) will likely rise. Open one at Fidelity, Vanguard, or Schwab in ~15 minutes.\n2. **401(k)** beyond the match, especially if you want to lower this year's taxable income (traditional) or you have Roth 401(k) access.\n3. **Taxable brokerage account** only after you've maxed the tax-advantaged space, or if you need access to the money before retirement.\n\n**What to buy \u2014 keep it boring and broad:**\n- A **total US stock market index fund** (e.g., VTI / VTSAX / FSKAX) or an **S&P 500 index fund** (VOO / FXAIX).\n- Optionally add a **total international index fund** and, later, bonds.\n- A single **target-date fund** (e.g., \"Target 2060\") is a legitimate one-fund solution \u2014 it's automatically diversified and rebalances for you. Perfect if you'd rather not think about it.\n\nLook for **expense ratios under ~0.10%**. The big index funds are essentially free these days, and low fees compound in your favor over decades.\n\n**Automate it.** Set up an automatic monthly transfer into the account. Consistent, boring, automatic investing beats trying to time the market.\n\n---\n\n## Keeping taxes low \u2014 the practical checklist\n\n- **Prioritize tax-advantaged accounts** (Roth IRA, 401(k)/HSA) over taxable ones. This is 90% of tax efficiency for most people.\n- **HSA**, if you have a high-deductible health plan, is the most tax-advantaged account that exists (deductible in, tax-free growth, tax-free for medical) \u2014 worth using.\n- In taxable accounts, favor **broad index funds/ETFs**, which are naturally tax-efficient (low turnover, few capital gains distributions). ETFs are generally slightly more tax-efficient than mutual funds.\n- **Buy and hold.** Selling investments held under a year triggers higher **short-term capital gains** (taxed as ordinary income). Holding 1+ year qualifies for lower **long-term** rates.\n- Don't chase frequent trading \u2014 it creates taxable events and rarely beats buy-and-hold.\n- Later on, techniques like **tax-loss harvesting** and holding tax-inefficient assets (bonds, REITs) inside retirement accounts can help, but don't over-engineer this early.\n\n---\n\n## Your simple game plan\n\n1. Save a **$1\u20132k starter cushion** in a high-yield savings account.\n2. Grab any **401(k) employer match** (free money).\n3. **Pay off the $6k at 19%** as fast as possible \u2014 this *is* a 19% return.\n4. Build a **3\u20136 month emergency fund**.\n5. **Open a Roth IRA**, buy a low-cost total-market or S&P 500 index fund (or a target-date fund), and **automate monthly contributions**.\n\nThe index funds will still be there in 12\u201318 months \u2014 and you'll be buying them with money that's no longer bleeding 19% interest, backed by a safety net that lets you stay invested through the ups and downs. That patience is exactly what makes long-term investing work.\n\n*Again, this is general education, not individualized advice. A fee-only (fiduciary) financial planner or CPA can tailor this to your full picture.*\n"}], "grading": {"eval_id": 2, "config": "without_skill", "num_passed": 7, "num_total": 7, "expectations": [{"text": "Advises paying off 19% credit card debt before investing", "passed": true, "evidence": "crushing the credit card debt"}, {"text": "Explains can't out-earn 19% with ~8-9% returns", "passed": true, "evidence": "19% debt vs. index fund return"}, {"text": "Recommends 3-6 month emergency reserve in money market fund", "passed": true, "evidence": "3\u20136 month emergency"}, {"text": "Mentions employer 401(k) match / tax-advantaged first", "passed": true, "evidence": "401(k) match"}, {"text": "Does NOT lead with a fund allocation as primary answer", "passed": true, "evidence": "order of operations"}, {"text": "Recommends low-cost index funds once foundation set", "passed": true, "evidence": "index fund"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "educational information"}]}}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "claudie-mutual-fund-advisor", "skill_path": "<path/to/skill>", "executor_model": "<model-name>", "analyzer_model": "<model-name>", "timestamp": "2026-07-28T16:46:23Z", "evals_run": [0, 1, 2], "runs_per_configuration": 3}, "runs": [{"eval_id": 0, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 7, "failed": 0, "total": 7, "time_seconds": 126.2, "tokens": 90447, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Computes the bond allocation as ~32% using age-10 (42-10)", "passed": true, "evidence": "bonds = age \u2212 10 = 42 \u2212 10 = 32%"}, {"text": "Computes the stock allocation as ~68% using 110-age (110-42)", "passed": true, "evidence": "stocks = 110 \u2212 age = 110 \u2212 42 = 68%"}, {"text": "Recommends ~one-third of the stock sleeve international", "passed": true, "evidence": "one-third of stocks overseas"}, {"text": "Recommends low-cost index funds", "passed": true, "evidence": "low-cost index"}, {"text": "Notes IRA is tax-sheltered so tax placement doesn't apply", "passed": true, "evidence": "ira \u2014 you keep the tax shelter"}, {"text": "Shows the allocation arithmetic explicitly", "passed": true, "evidence": "age \u2212 10"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "educational guidance"}], "notes": []}, {"eval_id": 1, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 0.8333, "passed": 5, "failed": 1, "total": 6, "time_seconds": 53.1, "tokens": 88470, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Identifies the 5.75% as a front-end load / sales commission", "passed": true, "evidence": "5.75% front-end load"}, {"text": "Recommends avoiding the load / no-load alternatives", "passed": true, "evidence": "pass on"}, {"text": "Explains load buys nothing in fund quality", "passed": true, "evidence": "goes to the broker"}, {"text": "Treats 0.64% expense ratio as secondary to the load", "passed": true, "evidence": "0.64% per year \u2014 the less bad"}, {"text": "Correctly labels Class A as front-end-load share class", "passed": false, "evidence": ""}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "educational guidance"}], "notes": []}, {"eval_id": 2, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 7, "failed": 0, "total": 7, "time_seconds": 130.3, "tokens": 98338, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Advises paying off 19% credit card debt before investing", "passed": true, "evidence": "kill the credit card debt"}, {"text": "Explains can't out-earn 19% with ~8-9% returns", "passed": true, "evidence": "19%/year, guaranteed"}, {"text": "Recommends 3-6 month emergency reserve in money market fund", "passed": true, "evidence": "3\u20136 months of living expenses**, held in a **money market"}, {"text": "Mentions employer 401(k) match / tax-advantaged first", "passed": true, "evidence": "401(k) match"}, {"text": "Does NOT lead with a fund allocation as primary answer", "passed": true, "evidence": "not index funds yet"}, {"text": "Recommends low-cost index funds once foundation set", "passed": true, "evidence": "index fund"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "not a licensed"}], "notes": []}, {"eval_id": 0, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.7143, "passed": 5, "failed": 2, "total": 7, "time_seconds": 34.8, "tokens": 82500, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Computes the bond allocation as ~32% using age-10 (42-10)", "passed": false, "evidence": ""}, {"text": "Computes the stock allocation as ~68% using 110-age (110-42)", "passed": true, "evidence": "stock percentage \u2192 110 \u2212 42 = **68%"}, {"text": "Recommends ~one-third of the stock sleeve international", "passed": false, "evidence": ""}, {"text": "Recommends low-cost index funds", "passed": true, "evidence": "index fund"}, {"text": "Notes IRA is tax-sheltered so tax placement doesn't apply", "passed": true, "evidence": "ira this is tax-free, so it's painless"}, {"text": "Shows the allocation arithmetic explicitly", "passed": true, "evidence": "110 \u2212"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "not a licensed"}], "notes": []}, {"eval_id": 1, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6, "time_seconds": 47.7, "tokens": 83176, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Identifies the 5.75% as a front-end load / sales commission", "passed": true, "evidence": "5.75% front-end load (sales"}, {"text": "Recommends avoiding the load / no-load alternatives", "passed": true, "evidence": "instead"}, {"text": "Explains load buys nothing in fund quality", "passed": true, "evidence": "goes to the broker"}, {"text": "Treats 0.64% expense ratio as secondary to the load", "passed": true, "evidence": "not terrible"}, {"text": "Correctly labels Class A as front-end-load share class", "passed": true, "evidence": "class and the sales load"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "fee-only"}], "notes": []}, {"eval_id": 2, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 7, "failed": 0, "total": 7, "time_seconds": 45.1, "tokens": 83147, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Advises paying off 19% credit card debt before investing", "passed": true, "evidence": "crushing the credit card debt"}, {"text": "Explains can't out-earn 19% with ~8-9% returns", "passed": true, "evidence": "19% debt vs. index fund return"}, {"text": "Recommends 3-6 month emergency reserve in money market fund", "passed": true, "evidence": "3\u20136 month emergency"}, {"text": "Mentions employer 401(k) match / tax-advantaged first", "passed": true, "evidence": "401(k) match"}, {"text": "Does NOT lead with a fund allocation as primary answer", "passed": true, "evidence": "order of operations"}, {"text": "Recommends low-cost index funds once foundation set", "passed": true, "evidence": "index fund"}, {"text": "Includes an educational / not-a-licensed-advisor caveat", "passed": true, "evidence": "educational information"}], "notes": []}], "run_summary": {"with_skill": {"pass_rate": {"mean": 0.9444, "stddev": 0.0962, "min": 0.8333, "max": 1.0}, "time_seconds": {"mean": 103.2, "stddev": 43.4363, "min": 53.1, "max": 130.3}, "tokens": {"mean": 92418.3333, "stddev": 5221.0126, "min": 88470, "max": 98338}}, "without_skill": {"pass_rate": {"mean": 0.9048, "stddev": 0.1649, "min": 0.7143, "max": 1.0}, "time_seconds": {"mean": 42.5333, "stddev": 6.8223, "min": 34.8, "max": 47.7}, "tokens": {"mean": 82941.0, "stddev": 382.1924, "min": 82500, "max": 83176}}, "delta": {"pass_rate": "+0.04", "time_seconds": "+60.7", "tokens": "+9477"}}, "notes": []}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

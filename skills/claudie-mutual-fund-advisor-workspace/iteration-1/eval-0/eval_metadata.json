@@ -1,0 +1,14 @@
+{
+  "eval_id": 0,
+  "eval_name": "portfolio-allocation-ira-rollover",
+  "prompt": "I'm 42, married, and just rolled over an old 401(k) into an IRA with about $85k in it. I won't touch it until retirement (~25 years). I'd call myself middle-of-the-road on risk. How should I split this across funds?",
+  "assertions": [
+    {"text": "Computes the bond allocation as ~32% using age-10 (42-10)", "type": "content"},
+    {"text": "Computes the stock allocation as ~68% using 110-age (110-42)", "type": "content"},
+    {"text": "Recommends putting roughly one-third of the stock sleeve in international funds", "type": "content"},
+    {"text": "Recommends low-cost index funds", "type": "content"},
+    {"text": "Notes that inside an IRA taxes are sheltered, so tax-placement/tax-free-fund concerns don't apply", "type": "content"},
+    {"text": "Shows the allocation arithmetic explicitly rather than just stating percentages", "type": "content"},
+    {"text": "Includes an educational / not-a-licensed-advisor style caveat", "type": "content"}
+  ]
+}

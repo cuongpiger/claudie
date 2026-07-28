@@ -1,0 +1,38 @@
+{
+  "eval_id": 1,
+  "config": "with_skill",
+  "num_passed": 5,
+  "num_total": 6,
+  "expectations": [
+    {
+      "text": "Identifies the 5.75% as a front-end load / sales commission",
+      "passed": true,
+      "evidence": "5.75% front-end load"
+    },
+    {
+      "text": "Recommends avoiding the load / no-load alternatives",
+      "passed": true,
+      "evidence": "pass on"
+    },
+    {
+      "text": "Explains load buys nothing in fund quality",
+      "passed": true,
+      "evidence": "goes to the broker"
+    },
+    {
+      "text": "Treats 0.64% expense ratio as secondary to the load",
+      "passed": true,
+      "evidence": "0.64% per year \u2014 the less bad"
+    },
+    {
+      "text": "Correctly labels Class A as front-end-load share class",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "text": "Includes an educational / not-a-licensed-advisor caveat",
+      "passed": true,
+      "evidence": "educational guidance"
+    }
+  ]
+}

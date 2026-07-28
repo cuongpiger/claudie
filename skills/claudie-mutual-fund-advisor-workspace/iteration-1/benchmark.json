@@ -1,0 +1,373 @@
+{
+  "metadata": {
+    "skill_name": "claudie-mutual-fund-advisor",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-07-28T16:46:23Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 126.2,
+        "tokens": 90447,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Computes the bond allocation as ~32% using age-10 (42-10)",
+          "passed": true,
+          "evidence": "bonds = age \u2212 10 = 42 \u2212 10 = 32%"
+        },
+        {
+          "text": "Computes the stock allocation as ~68% using 110-age (110-42)",
+          "passed": true,
+          "evidence": "stocks = 110 \u2212 age = 110 \u2212 42 = 68%"
+        },
+        {
+          "text": "Recommends ~one-third of the stock sleeve international",
+          "passed": true,
+          "evidence": "one-third of stocks overseas"
+        },
+        {
+          "text": "Recommends low-cost index funds",
+          "passed": true,
+          "evidence": "low-cost index"
+        },
+        {
+          "text": "Notes IRA is tax-sheltered so tax placement doesn't apply",
+          "passed": true,
+          "evidence": "ira \u2014 you keep the tax shelter"
+        },
+        {
+          "text": "Shows the allocation arithmetic explicitly",
+          "passed": true,
+          "evidence": "age \u2212 10"
+        },
+        {
+          "text": "Includes an educational / not-a-licensed-advisor caveat",
+          "passed": true,
+          "evidence": "educational guidance"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 53.1,
+        "tokens": 88470,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the 5.75% as a front-end load / sales commission",
+          "passed": true,
+          "evidence": "5.75% front-end load"
+        },
+        {
+          "text": "Recommends avoiding the load / no-load alternatives",
+          "passed": true,
+          "evidence": "pass on"
+        },
+        {
+          "text": "Explains load buys nothing in fund quality",
+          "passed": true,
+          "evidence": "goes to the broker"
+        },
+        {
+          "text": "Treats 0.64% expense ratio as secondary to the load",
+          "passed": true,
+          "evidence": "0.64% per year \u2014 the less bad"
+        },
+        {
+          "text": "Correctly labels Class A as front-end-load share class",
+          "passed": false,
+          "evidence": ""
+        },
+        {
+          "text": "Includes an educational / not-a-licensed-advisor caveat",
+          "passed": true,
+          "evidence": "educational guidance"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 130.3,
+        "tokens": 98338,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Advises paying off 19% credit card debt before investing",
+          "passed": true,
+          "evidence": "kill the credit card debt"
+        },
+        {
+          "text": "Explains can't out-earn 19% with ~8-9% returns",
+          "passed": true,
+          "evidence": "19%/year, guaranteed"
+        },
+        {
+          "text": "Recommends 3-6 month emergency reserve in money market fund",
+          "passed": true,
+          "evidence": "3\u20136 months of living expenses**, held in a **money market"
+        },
+        {
+          "text": "Mentions employer 401(k) match / tax-advantaged first",
+          "passed": true,
+          "evidence": "401(k) match"
+        },
+        {
+          "text": "Does NOT lead with a fund allocation as primary answer",
+          "passed": true,
+          "evidence": "not index funds yet"
+        },
+        {
+          "text": "Recommends low-cost index funds once foundation set",
+          "passed": true,
+          "evidence": "index fund"
+        },
+        {
+          "text": "Includes an educational / not-a-licensed-advisor caveat",
+          "passed": true,
+          "evidence": "not a licensed"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.7143,
+        "passed": 5,
+        "failed": 2,
+        "total": 7,
+        "time_seconds": 34.8,
+        "tokens": 82500,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Computes the bond allocation as ~32% using age-10 (42-10)",
+          "passed": false,
+          "evidence": ""
+        },
+        {
+          "text": "Computes the stock allocation as ~68% using 110-age (110-42)",
+          "passed": true,
+          "evidence": "stock percentage \u2192 110 \u2212 42 = **68%"
+        },
+        {
+          "text": "Recommends ~one-third of the stock sleeve international",
+          "passed": false,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends low-cost index funds",
+          "passed": true,
+          "evidence": "index fund"
+        },
+        {
+          "text": "Notes IRA is tax-sheltered so tax placement doesn't apply",
+          "passed": true,
+          "evidence": "ira this is tax-free, so it's painless"
+        },
+        {
+          "text": "Shows the allocation arithmetic explicitly",
+          "passed": true,
+          "evidence": "110 \u2212"
+        },
+        {
+          "text": "Includes an educational / not-a-licensed-advisor caveat",
+          "passed": true,
+          "evidence": "not a licensed"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 47.7,
+        "tokens": 83176,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the 5.75% as a front-end load / sales commission",
+          "passed": true,
+          "evidence": "5.75% front-end load (sales"
+        },
+        {
+          "text": "Recommends avoiding the load / no-load alternatives",
+          "passed": true,
+          "evidence": "instead"
+        },
+        {
+          "text": "Explains load buys nothing in fund quality",
+          "passed": true,
+          "evidence": "goes to the broker"
+        },
+        {
+          "text": "Treats 0.64% expense ratio as secondary to the load",
+          "passed": true,
+          "evidence": "not terrible"
+        },
+        {
+          "text": "Correctly labels Class A as front-end-load share class",
+          "passed": true,
+          "evidence": "class and the sales load"
+        },
+        {
+          "text": "Includes an educational / not-a-licensed-advisor caveat",
+          "passed": true,
+          "evidence": "fee-only"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 45.1,
+        "tokens": 83147,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Advises paying off 19% credit card debt before investing",
+          "passed": true,
+          "evidence": "crushing the credit card debt"
+        },
+        {
+          "text": "Explains can't out-earn 19% with ~8-9% returns",
+          "passed": true,
+          "evidence": "19% debt vs. index fund return"
+        },
+        {
+          "text": "Recommends 3-6 month emergency reserve in money market fund",
+          "passed": true,
+          "evidence": "3\u20136 month emergency"
+        },
+        {
+          "text": "Mentions employer 401(k) match / tax-advantaged first",
+          "passed": true,
+          "evidence": "401(k) match"
+        },
+        {
+          "text": "Does NOT lead with a fund allocation as primary answer",
+          "passed": true,
+          "evidence": "order of operations"
+        },
+        {
+          "text": "Recommends low-cost index funds once foundation set",
+          "passed": true,
+          "evidence": "index fund"
+        },
+        {
+          "text": "Includes an educational / not-a-licensed-advisor caveat",
+          "passed": true,
+          "evidence": "educational information"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9444,
+        "stddev": 0.0962,
+        "min": 0.8333,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 103.2,
+        "stddev": 43.4363,
+        "min": 53.1,
+        "max": 130.3
+      },
+      "tokens": {
+        "mean": 92418.3333,
+        "stddev": 5221.0126,
+        "min": 88470,
+        "max": 98338
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.9048,
+        "stddev": 0.1649,
+        "min": 0.7143,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 42.5333,
+        "stddev": 6.8223,
+        "min": 34.8,
+        "max": 47.7
+      },
+      "tokens": {
+        "mean": 82941.0,
+        "stddev": 382.1924,
+        "min": 82500,
+        "max": 83176
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.04",
+      "time_seconds": "+60.7",
+      "tokens": "+9477"
+    }
+  },
+  "notes": []
+}

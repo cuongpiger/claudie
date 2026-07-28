@@ -1,0 +1,22 @@
+[
+  {"query": "i'm 34, maxing my 401k, and i have no idea how to split it between the fund options — theres like a total stock index, an intl one, a bond one and a target date 2055. how much in each?", "should_trigger": true},
+  {"query": "my financial guy wants to put me in the American Funds A shares with a 5.75% sales charge. is that a rip off or normal?", "should_trigger": true},
+  {"query": "where should i park my emergency fund? savings account or a money market fund?", "should_trigger": true},
+  {"query": "VTSAX vs an actively managed large cap fund like FCNTX — which should i buy for a 20 year hold?", "should_trigger": true},
+  {"query": "i just inherited $120k. should i dump it all into index funds at once or spread it out over the year?", "should_trigger": true},
+  {"query": "how do i lower the taxes on my mutual fund in my taxable brokerage account? i keep getting hit with capital gains distributions every december", "should_trigger": true},
+  {"query": "im 29 with 8k in credit card debt but i really want to start investing in index funds, where do i even start", "should_trigger": true},
+  {"query": "whats a good expense ratio for a bond fund? my current one charges 0.75% and i feel like thats high", "should_trigger": true},
+  {"query": "my funds are down 18% this year, should i sell and move to cash until things calm down?", "should_trigger": true},
+  {"query": "help me build a retirement portfolio out of vanguard funds for a 50 year old who's a bit conservative", "should_trigger": true},
+  {"query": "should i put money into bitcoin and ethereum right now or wait for the next dip?", "should_trigger": false},
+  {"query": "can you analyze Tesla's latest 10-K and tell me if the stock is a buy at this price?", "should_trigger": false},
+  {"query": "im thinking about buying a rental property as an investment, whats a good cap rate to aim for?", "should_trigger": false},
+  {"query": "build me a monthly household budget spreadsheet, i take home about 5k and want to track my spending categories", "should_trigger": false},
+  {"query": "what's the difference between a traditional and roth IRA for tax purposes?", "should_trigger": false},
+  {"query": "explain how a mutual fund is structured legally — like what's an open-end fund vs a closed-end fund and how does the NAV get calculated?", "should_trigger": false},
+  {"query": "i want to day trade options on SPY, whats a good strategy for weekly expirations?", "should_trigger": false},
+  {"query": "how much life insurance and disability insurance should i carry? i'm 40 with two kids", "should_trigger": false},
+  {"query": "write me a python script that pulls historical fund prices from an API and plots the returns", "should_trigger": false},
+  {"query": "my company gives me RSUs that vest next month, should i sell them immediately or hold?", "should_trigger": false}
+]

@@ -1,0 +1,46 @@
+{
+  "eval_id": 2,
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 7,
+    "failed": 0,
+    "total": 7
+  },
+  "expectations": [
+    {
+      "text": "Advises paying off 19% credit card debt before investing",
+      "passed": true,
+      "evidence": "kill the credit card debt"
+    },
+    {
+      "text": "Explains can't out-earn 19% with ~8-9% returns",
+      "passed": true,
+      "evidence": "19%/year, guaranteed"
+    },
+    {
+      "text": "Recommends 3-6 month emergency reserve in money market fund",
+      "passed": true,
+      "evidence": "3\u20136 months of living expenses**, held in a **money market"
+    },
+    {
+      "text": "Mentions employer 401(k) match / tax-advantaged first",
+      "passed": true,
+      "evidence": "401(k) match"
+    },
+    {
+      "text": "Does NOT lead with a fund allocation as primary answer",
+      "passed": true,
+      "evidence": "not index funds yet"
+    },
+    {
+      "text": "Recommends low-cost index funds once foundation set",
+      "passed": true,
+      "evidence": "index fund"
+    },
+    {
+      "text": "Includes an educational / not-a-licensed-advisor caveat",
+      "passed": true,
+      "evidence": "not a licensed"
+    }
+  ]
+}
