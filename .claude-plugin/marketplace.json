@@ -24,7 +24,8 @@
                 "./skills/claudie-python-expert",
                 "./skills/claudie-typescript-expert",
                 "./skills/claudie-turborepo",
-                "./skills/claudie-fintech-fe"
+                "./skills/claudie-fintech-fe",
+                "./skills/claudie-python-design-pattern"
             ]
         },
         {

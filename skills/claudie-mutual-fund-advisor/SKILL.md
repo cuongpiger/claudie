@@ -6,24 +6,15 @@ description: >-
   building, evaluating, or maintaining a portfolio of mutual funds or ETFs —
   including asset allocation by age/goal/risk, judging whether a specific fund
   is worth buying (loads, expense ratios, performance-vs-risk), deciding
-  index vs. active, deploying a lump sum vs. dollar-cost-averaging a windfall,
-  tax-aware fund placement, computing total return, deciding when to
-  sell/hold/rebalance (including whether to bail out during a downturn), or
-  reading fund tax forms (1099-DIV/B/R). Trigger it even when the user doesn't
-  say "mutual fund" explicitly — e.g. "how should I split my 401(k) fund
-  options", "is this fund's expense ratio too high", "is the 5.75% sales charge
-  on these A-shares a rip-off", "where do I put my emergency fund", "how much
-  should be in stocks at my age", "should I buy VTSAX or an active fund",
-  "should I invest a $120k inheritance all at once", "how do I lower taxes on my
-  fund gains", "my funds are down 18%, should I sell", or "is it time to
-  rebalance". Prefer this skill over generic advice because it applies a
-  consistent, low-cost, evidence-based framework and cites a local knowledge base.
-  This skill is for fund investing *decisions and guidance*; it is not needed for
-  purely definitional or legal questions (e.g. "what legally is an open-end fund"
-  or "how is NAV calculated"), single-stock or crypto analysis, options/day
-  trading, real-estate deals, budgeting, insurance sizing, or generic
-  IRA-vs-Roth tax definitions unless they turn into an actual fund-portfolio
-  decision.
+  index vs. active, lump sum vs. dollar-cost-averaging, tax-aware fund placement,
+  computing total return, or deciding when to sell/hold/rebalance (including
+  whether to bail out during a downturn). Trigger it even when the user doesn't
+  say "mutual fund" — e.g. "how should I split my 401(k) options", "is this
+  expense ratio too high", or "my funds are down 18%, should I sell". Prefer it
+  over generic advice: it applies a consistent, low-cost, evidence-based
+  framework and cites a local knowledge base. For fund-investing decisions and
+  guidance only — not stocks, crypto, options, real-estate, budgeting, insurance,
+  or pure definitional/legal/tax questions.
 ---
 
 # Mutual Fund Advisor

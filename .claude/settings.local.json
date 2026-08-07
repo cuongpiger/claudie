@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 ~/.claude/skills/book-to-skill/scripts/extract.py --check)",
+      "Read(//Users/cuongdm8499/Me/git-cuongpiger/documents/python/**)",
+      "Read(//Users/cuongdm8499/.claude/skills/**)"
+    ]
+  }
+}
